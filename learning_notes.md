@@ -142,7 +142,7 @@ Assign an internal IP address to each of the nodes.
 See [kubernetes package installation guide](kubernetes/0-PackageInstallation-containerd.sh)
 
 #### 3. Bootstrap a Cluster with kubeadm - Control Plane Node
-kubeadm will: 
+kubeadm init will: 
 - execute a series of pre-flight checks:
     - ensures you have right permissions on the system
     - ensures you have enough system resources
@@ -156,8 +156,29 @@ kubeadm will:
         - Client certificates
         - Cluster API network location
     - stored in /etc/kubernetes
+        - admin.connf (kubernetes-admin)
+        - super-admin.conf
+        - controller-manager.conf
+        - scheduler.conf
+        - kubelet.conf
 - generate static pod manifests
+    - manifest describes a configuration
+    - lives in /etc/kubernetes/manifests
+    - watched by the **kubelet** to start automatically on system start or restart
 - wait for the control plane pods to start
 - taint the control plane node (so user pods won't be scheduled onto control plane node)
 - generate a bootstrap token (used to add nodes to the cluster)
 - start add-on pods
+
+To create the Control Plane Node follow the [link](kubernetes/1-CreateControlPlaneNode-containerd.sh)
+
+#### 4. Bootstrap a Cluster with kubeadm - Worker Node
+**kubeadm join** will be used to join a node to a cluster
+
+kubeadm join will:
+- download cluster information
+- submit CSR (Certificate Signing Request) and receive a certificate that node kubelet will use to join the cluster
+- CA automatically signs the CSR, kubeadm join downloads the certificate and stores it in a file system of the node (/var/lib/kubelet/pki)
+- generate kubelet.conf file
+
+Follow the [link](kubernetes/2-CreateNodes-containerd.sh) for further instructions on how to join the worker node onto the cluster
