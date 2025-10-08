@@ -182,3 +182,34 @@ kubeadm join will:
 - generate kubelet.conf file
 
 Follow the [link](kubernetes/2-CreateNodes-containerd.sh) for further instructions on how to join the worker node onto the cluster
+
+## Working with Clusters
+The main tool to control a running Cluster is **kubectl**
+
+usage: kubectl [operation] [resource] [name] [flags (e.g. output)]<br>
+Note: name is optional if you want to work with multiple resources
+
+More on usage in [kubernetes kubectl documentation](https://kubernetes.io/docs/reference/kubectl/kubectl/) and [cheatsheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/)
+
+### kubectl operations
+- apply/create - create resource
+- run - start a pod from an image (a pod that is not managed by a controller)
+- explain - documentation of resources
+- delete - delete resource
+- get - list resources
+- describe - detailed resource information
+- exec - execute a command on a container
+- logs - view logs on a container
+
+### kubectl resources
+- nodes (no)
+- pods (po)
+- services (svc)
+- ...more resources [here](https://kubernetes.io/docs/reference/kubectl/overview/#resource-types)
+
+### kubectl output
+By adding additional flags, kubectl output can be modified. Output flag is -o
+- wide - output additional information
+- yaml - TAML formatted API object
+- json - JSON formatted API object
+- dry-run - print an object without sending it to the API Server (good for generating YAML on how to create resources)
