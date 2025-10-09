@@ -102,6 +102,10 @@ Examples:
 - Pods on a Node can communicate to all Pods on all Nodes without Network Address Translation (NAT)
 - Agents (kubelet, System Daemon, etc.) on a Node can communicate with all Pods on that Node
 
+### CNI (Container Network Interface) can be used to satisfy Kubernetes networking requirements
+Kubernetes by itself doesn’t implement networking. Instead, it defines networking requirements that can be satisfied by a Container Network Interface (CNI) plugin.
+**Calico** is one of the most popular CNI implementations.
+
 ## Installing Kubernetes with **kubeadm**
 ### Where to install?
 - Cloud
