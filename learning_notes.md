@@ -213,3 +213,18 @@ By adding additional flags, kubectl output can be modified. Output flag is -o
 - yaml - TAML formatted API object
 - json - JSON formatted API object
 - dry-run - print an object without sending it to the API Server (good for generating YAML on how to create resources)
+
+Examples of kubectl usage and how to enable bash kublectl completion [here](kubernetes/1-workingwithyourcluster.sh)
+
+## Application Deployment in Kubernetes
+### Imperative configuration (executing commands in cli one at a time)
+- kubectl create deployment nginx -- image=nginx
+- kubectl run nginx -image=nginx
+### Declarative (Configured in a file with desired state)
+- Define desired state in code
+- Manifest in YAML or JSON
+- kubectl apply -f deployment.yaml
+
+Using imperative way with a dry run flag (--dry-run=client -o yaml > deployment.yaml) could help generate correct Declarative configuration
+
+Instructions on how to deploy your application into the cluster and how to modify existing deployments [here](kubernetes/2-deployingapplications.sh)
