@@ -232,3 +232,38 @@ Examples of kubectl usage and how to enable bash kublectl completion [here](kube
 Using imperative way with a dry run flag (--dry-run=client -o yaml > deployment.yaml) could help generate correct Declarative configuration
 
 Instructions on how to deploy your application into the cluster and how to modify existing deployments [here](kubernetes/2-deployingapplications.sh)
+
+## Cluster Maintenance
+### Cluster Upgrade Process
+- Upgrade Control Plane Node -> Upgrade any other Control Plane Nodes -> Upgrade Worker Nodes
+- Can only upgrade minor versions
+    - 1.28 -> 1.29
+    - 1.27 X 1.29
+- Read the release notes before each upgrade
+### Worker Node Maintenance
+- Version upgrades, OS updates and hardware updates
+#### Steps:
+- ##### Drain/Cordon the Node
+    - kubectl drain NODE_NAME
+        - Marks the node unschedulable
+        - Gracefully terminates Pods (Controller automatically reschedules them on other Nodes)
+- ##### Keep resources in mind
+    Before draining the Node be sure you have enough resources on the other Nodes to take over the work of the Node you're about to drain and upgrade
+
+### Upgrade Control Plane
+- Update kubeadm package (apt or yum upgrade)
+- kubeadm upgrade plan
+    - does pre-flight checks like ensuring you're upgrading to an appropriate version, nodes are healthy, etc.
+- kubeadm upgrade apply
+    - runs pre-flight checks
+    - pre-pulls the container images
+    - updates certificates for each control plane pod
+    - creates new static pod manifests in /etc/kubernetes/manifests
+    - saves previous manifests in /etc/kubernetes/temp
+- drain the Control Plane Node
+    - drain only non-control plane pods
+    - control plane pods will stay on control plane node, since they are static
+- upgrade kubelet and kubectl
+- uncordon/undrain the Control Plane Node
+
+Instructions on how to do it in terminal [here](./kubernetes/1-ControlPlaneUpgrade.sh)
