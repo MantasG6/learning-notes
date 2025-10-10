@@ -17,7 +17,7 @@ We can describe how our application structure looks like (all different services
 #### Kubernetes API
 Provides a way to deploy and manage the Kubernetes services and also this is where Kubernetes Cluster components interact with each other
 
-## Kubernets API Objects
+## Kubernetes API Objects
 Kubernetes API Objects are the components which help us configure and deploy applications to Kubernetes. Using these objects we define the state and structure of the system. We can do that both **Declaratively** (using .yml) and **Imperatively** (setting everything up using the command line)
 
 ### Pods
@@ -41,7 +41,7 @@ Types of controllers:
 ### Services
 Helps to keep Pods **persistent** (since they are *ephemeral*)
 - Service is provided with an **IP** address and a **DNS** name
-- Users can just simply reach new pods by communicating with the Serivce instead of individual pods, that get deleted and recreated
+- Users can just simply reach new pods by communicating with the Service instead of individual pods, that get deleted and recreated
 - Helps to manage easy **Scaling**
 - Handles all the **routing** to pods
 - Provides **Load Balancing**
@@ -79,7 +79,7 @@ Each node has these services:
 - Executes Pod *probes*
 
 #### kube-proxy
-- most commonly impemented in **iptables**
+- most commonly implemented in **iptables**
 - implements Services
 - Routes traffic to Pods
 - Load balancing
@@ -98,7 +98,7 @@ Examples:
 - #### Ingres controller
     Advanced load balancers
 
-## Kubernets Networking
+## Kubernetes Networking
 - Pods on a Node can communicate to all Pods on all Nodes without Network Address Translation (NAT)
 - Agents (kubelet, System Daemon, etc.) on a Node can communicate with all Pods on that Node
 
@@ -115,7 +115,7 @@ Kubernetes by itself doesn’t implement networking. Instead, it defines network
     - Bare metal
     - Virtual machines
 
-While Cloud takes care of the harware and/or software maintenance, on-prem solution might be cheape and more flexible.
+While Cloud takes care of the hardware and/or software maintenance, on-prem solution might be cheaper and more flexible.
 
 ### Installation Requirements
 - #### System
@@ -160,7 +160,7 @@ kubeadm init will:
         - Client certificates
         - Cluster API network location
     - stored in /etc/kubernetes
-        - admin.connf (kubernetes-admin)
+        - admin.conf (kubernetes-admin)
         - super-admin.conf
         - controller-manager.conf
         - scheduler.conf
@@ -193,7 +193,7 @@ The main tool to control a running Cluster is **kubectl**
 usage: kubectl [operation] [resource] [name] [flags (e.g. output)]<br>
 Note: name is optional if you want to work with multiple resources
 
-More on usage in [kubernetes kubectl documentation](https://kubernetes.io/docs/reference/kubectl/kubectl/) and [cheatsheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/)
+More on usage in [kubernetes kubectl documentation](https://kubernetes.io/docs/reference/kubectl/kubectl/) and [cheat sheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/)
 
 ### kubectl operations
 - apply/create - create resource
@@ -214,7 +214,7 @@ More on usage in [kubernetes kubectl documentation](https://kubernetes.io/docs/r
 ### kubectl output
 By adding additional flags, kubectl output can be modified. Output flag is -o
 - wide - output additional information
-- yaml - TAML formatted API object
+- yaml - YAML formatted API object
 - json - JSON formatted API object
 - dry-run - print an object without sending it to the API Server (good for generating YAML on how to create resources)
 
