@@ -250,7 +250,7 @@ Instructions on how to deploy your application into the cluster and how to modif
 - ##### Keep resources in mind
     Before draining the Node be sure you have enough resources on the other Nodes to take over the work of the Node you're about to drain and upgrade
 
-### Upgrade Control Plane
+### Upgrade Control Plane Node
 - Update kubeadm package (apt or yum upgrade)
 - kubeadm upgrade plan
     - does pre-flight checks like ensuring you're upgrading to an appropriate version, nodes are healthy, etc.
@@ -267,3 +267,25 @@ Instructions on how to deploy your application into the cluster and how to modif
 - uncordon/undrain the Control Plane Node
 
 Instructions on how to do it in terminal [here](./kubernetes/1-ControlPlaneUpgrade.sh)
+
+### Upgrade Worker Nodes
+Be sure to upgrade worker nodes to the **same versions** as the **Control Plane Nodes**
+- update kubeadm
+- kubeadm upgrade node
+- drain the node
+- update kubelet and kubectl
+- uncordon the node
+
+Instructions on how to do it in terminal [here](./kubernetes/2-NodeUpgrade.sh)
+
+
+# Probes
+## Liveness probes
+Used by kubelet to know when to restart a container
+## Readiness probes
+Used by kubelet to know when the container is ready to start accepting traffic. A pod is considered ready when all of its containers are ready. This is used for services. When a pod is not ready, it is removed from service load balancers.
+## Startup probes
+Used by kubelet to know when a container application has started. This can be used to adopt liveness checks on slow starting containers, and will avoid them getting killed by the kubelet before they are up and running.
+
+# Init Containers
+These containers are used to support the main containers of the pod and are run before app containers start. They are mainly used for setup scripts. 
