@@ -279,13 +279,49 @@ Be sure to upgrade worker nodes to the **same versions** as the **Control Plane 
 Instructions on how to do it in terminal [here](./kubernetes/2-NodeUpgrade.sh)
 
 
-# Probes
-## Liveness probes
+## Probes
+### Liveness probes
 Used by kubelet to know when to restart a container
-## Readiness probes
+### Readiness probes
 Used by kubelet to know when the container is ready to start accepting traffic. A pod is considered ready when all of its containers are ready. This is used for services. When a pod is not ready, it is removed from service load balancers.
-## Startup probes
+### Startup probes
 Used by kubelet to know when a container application has started. This can be used to adopt liveness checks on slow starting containers, and will avoid them getting killed by the kubelet before they are up and running.
 
-# Init Containers
-These containers are used to support the main containers of the pod and are run before app containers start. They are mainly used for setup scripts. 
+## Init Containers
+These containers are used to support the main containers of the pod and are run before app containers start. They are mainly used for setup scripts.
+
+## Kustomize
+Community-led solution for managing **Kubernetes configuration**. Allows to take configuration expressed as raw YAML and customize the YAML for our purposes. It leaves the **original YAML** definitions **untouched**. A **good use case** is to use **Kustomize** to apply **DRY principle** while writing Kubernetes configuration for different environments (dev, stage, prod). Meaning to not rewrite configurations for each environment and to reuse the same one, but add minor changes related to that environment.
+
+Uses 2 broad classes to achieve the result:
+- Generators - create new Kubernetes objects when they don't exist and transform existing object when they do exist
+- Transformers - take existing Kubernetes objects and overlay alternative values and fields to make different variations of the configuration. 
+
+Kustomize key facts:
+- Originates from Google. It's a sub-project of the Kubernetes community CLI SIG (SIG-CLI)
+- Kustomize is both, a standalone binary, and also an integral part of Kubernetes CLI (kubectl)
+- Kustomize has many features, but if a required feature is missing this can be provided using a plugin.
+
+
+### Kubernetes Resource Model (KRM)
+A declarative way to express Kubernetes clusters. Kustomize adopts the familiar KRM approach for defining operations on configuration.
+
+The configuration is described in `kustomization.yaml` file
+
+### Built-in Generators
+- ConfigMap - Creates, replaces or merges one or more ConfigMap objects
+- Secret - Creates, replaces or merges one or more Secret objects
+
+### Built-in Transformers
+- Namespace - Sets namespace for some or all objects
+- ImageTag - Sets image name, tag or digest
+- PrefixSuffix - Adds a prefix or suffix to a name
+- ReplicaCount - Increase or decrease number of replicas
+
+### Built-in Metadata Transformers
+- Label - Adds labels to the metadata for objects and their corresponding selectors
+- Annotation - Adds annotation key/value pairs to the metadata for all applicable objects
+
+### Resources
+- List of directories pointing to configuration files that are going to be extended / changed
+- Web URLs can be used to provide remote resources. Web URLs are separated by // to provide a path location to resource within the remote locations (e.g. `https://git.com/myloc//path/to/deployments`)
