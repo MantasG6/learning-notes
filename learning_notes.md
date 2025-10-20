@@ -306,7 +306,16 @@ Kustomize key facts:
 ### Kubernetes Resource Model (KRM)
 A declarative way to express Kubernetes clusters. Kustomize adopts the familiar KRM approach for defining operations on configuration.
 
-The configuration is described in `kustomization.yaml` file
+The configuration is described in `kustomization.yaml` file.<br>
+Example:
+
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+```
 
 ### Built-in Generators
 - ConfigMap - Creates, replaces or merges one or more ConfigMap objects
