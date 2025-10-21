@@ -334,3 +334,49 @@ resources:
 ### Resources
 - List of directories pointing to configuration files that are going to be extended / changed
 - Web URLs can be used to provide remote resources. Web URLs are separated by // to provide a path location to resource within the remote locations (e.g. `https://git.com/myloc//path/to/deployments`)
+
+### Setting namespaces
+An example of how to set namespaces with kustomize:
+```
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+  # Include the namespace to add the managed-by label
+  - namespace.yaml
+buildMetadata:
+  - managedByLabel
+namespace: dev
+```
+
+namespace.yaml:
+```
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+```
+
+### Adding labels
+You can add label to all objects (resources) metadata or make **common** labels, that will be applied to not only the metadata, but the selectors and the templates
+```
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+  - namespace.yaml
+buildMetadata:
+  - managedByLabel
+namespace: dev
+# appears only in the metadata
+labels: 
+  - pairs:
+      app.kubernetes.io/env: dev
+# appears everywhere
+commonLabels:
+  app.kubernetes.io/version: v1.0
+
+```
