@@ -1,3 +1,911 @@
+# Why Use Interfaces in Java?
+- Interfaces define contracts - they specify what methods a class must implement, but not how.
+- Using interfaces lets classes like A depend on abstractions (interfaces) instead of concrete classes (B).
+- This means you can swap implementations easily without changing the dependent class A. For example, replacing B with C that implements the same interface.
+- Without interfaces, changing implementations requires updating A's code (like changing the type of its dependency), which can be cumbersome and error-prone.
+- Using interfaces also:
+  - Helps with unit testing (by allowing mock implementations).
+  - Supports loose coupling, making code easier to maintain and extend.
+  - Aligns with SOLID principles, especially Dependency Inversion Principle (DIP).
+- Using constructor injection (passing dependencies via constructor) enables the actual usage of interfaces and change dependencies without changing code.
+
+# How to choose the right collection in Java?
+Follow the [link](https://www.baeldung.com/java-choose-list-set-queue-map) to Baeldung page about it.
+
+# SOLID
+## S - Single Responsibility Principle (SRP)
+- A class should have only one reason to change.
+- Keep responsibilities separated to make code easier to maintain and less error-prone.
+
+## O - Open/Closed Principle (OCP)
+- Classes should be open for extension but closed for modification.
+- Add new functionality by adding code (e.g., new classes), not by changing existing, working code.
+
+## L - Liskov Substitution Principle (LSP)
+- Subtypes (dependencies) must be substitutable (exchangeable) for their base (interface) types without breaking the program.
+- New implementations of an interface or superclass shouldn't cause unexpected behavior or errors.
+
+## I - Interface Segregation Principle (ISP)
+- Clients should not be forced to depend on interfaces they don't use.
+- Prefer many small, focused interfaces rather than one large, general-purpose interface.
+- Segregate (split) interfaces to ensure that classes only implement what they need.
+
+## D - Dependency Inversion Principle (DIP)
+- High-level modules should not depend on low-level modules; both should depend on abstractions (interfaces).
+- Abstractions should not depend on details; details should depend on abstractions.
+- Enables easy swapping of implementations and better testability.
+
+# SOFTWARE DESIGN PATTERNS
+## CREATIONAL
+### SINGLETON
+#### Code example
+##### EAGER LOADING (Will have an instance even if never called and not needed)
+This implementation is also thread-safe, because for the new instances of classes, the thread safety is managed by JDK (Java class loader)
+```
+class Singleton {
+  private static Singleton INSTANCE = new Singleton();
+
+  private Singleton() {}
+
+  public static Singleton getInstance() {
+    return INSTANCE;
+  }
+}
+```
+##### LAZY LOADING (Create the object only when we call the static method for the first time)
+This is a more complex implementation, but could save some resources, since the instance is not created if it is not needed<br>
+The `Holder` inner class is needed to ensure the thread-safety (JDK ensures thread-safety for new instances).<br> 
+Since the `Holder` class is only called from inside `getInstance()`, the instance will not be created before we call `getInstance()` method for the first time.
+```
+class Singleton {
+
+  private static class Holder{
+    static final Singleton INSTANCE = new Singleton();
+  }
+
+  private Singleton() {}
+
+  public static Singleton getInstance() {
+    return Holder.INSTANCE;
+  }
+}
+```
+
+#### Summary:
+- Guarantee one instance
+- Easy to implement
+- Solves a well defined problem
+- Don't abuse it
+- Don't confuse with Factory patterns
+
+### BUILDER
+#### Code example
+```
+// Product class
+class House {
+    private String foundation;
+    private String walls;
+    private String roof;
+
+    // Private constructor - only Builder can create
+    private House(HouseBuilder builder) {
+        this.foundation = builder.foundation;
+        this.walls = builder.walls;
+        this.roof = builder.roof;
+    }
+
+    public static HouseBuilder builder() {
+        return new HouseBuilder();
+    }
+
+    // Builder Class
+    private static class HouseBuilder {
+        private String foundation;
+        private String walls;
+        private String roof;
+
+        public HouseBuilder foundation(String foundation) {
+            this.foundation = foundation;
+            return this;
+        }
+
+        public HouseBuilder walls(String walls) {
+            this.walls = walls;
+            return this;
+        }
+
+        public HouseBuilder roof(String roof) {
+            this.roof = roof;
+            return this;
+        }
+
+        public House build() {
+            return new House(this);
+        }
+    }
+}
+
+// Usage
+public class BuilderExample {
+    public static void main(String[] args) {
+        House house = House.builder()
+                .foundation("Concrete foundation")
+                .walls("Brick walls")
+                .roof("Tiled roof")
+                .build();
+
+        System.out.println(house);
+    }
+}
+```
+
+#### Summary:
+- Avoids multiple constructors
+- Few drawbacks
+- Immutable (only use when the objects must be immutable)
+
+### PROTOTYPE
+#### Code example
+```
+public class Registry {
+
+	private final Map<String, Item> items = new HashMap<>();
+	
+	public Registry() {
+		loadItems();
+	}
+	
+	public Item createItem (String type) {
+		Item item = null;
+
+		try {
+			item = (Item)(items.get(type)).clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+
+		return item;
+	}
+	
+	private void loadItems() {
+		Movie movie = new Movie();
+		movie.setTitle("Basic Movie");
+		movie.setPrice(24.99);
+		movie.setRuntime("2 hours");
+		items.put("Movie", movie);
+		
+		Book book = new Book();
+		book.setNumberOfPages(335);
+		book.setPrice(19.99);
+		book.setTitle("Basic Book");
+		items.put("Book", book);
+	}
+}
+
+public abstract class Item implements Cloneable {
+	private String title;
+	private double price;
+	private String url;
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+}
+
+public class Movie extends Item {
+
+	private String runtime;
+
+	public String getRuntime() {
+		return runtime;
+	}
+
+	public void setRuntime(String runtime) {
+		this.runtime = runtime;
+	}
+	
+}
+
+public class PrototypeDemo {
+
+	public static void main(String[] args) {
+		Registry registry = new Registry();
+		Movie movie = (Movie) registry.createItem("Movie");
+		movie.setTitle("Creational Patterns in Java");
+		
+		System.out.println(movie);
+		System.out.println(movie.getRuntime());
+		System.out.println(movie.getTitle());
+		System.out.println(movie.getUrl());
+		
+		Movie anotherMovie = (Movie) registry.createItem("Movie");
+		anotherMovie.setTitle("Gang of Four");
+		
+		System.out.println(anotherMovie);
+		System.out.println(anotherMovie.getRuntime());
+		System.out.println(anotherMovie.getTitle());
+		System.out.println(anotherMovie.getUrl());
+	}
+
+}
+```
+
+#### Shallow and Deep copies
+##### Shallow copy:
+
+- The object itself is copied, but its references (like fields that point to other objects) are not.
+- Imagine copying a library card catalog: you duplicate the card entries, but the cards still point to the same books on the shelf.
+- This means if you change a referenced object in one copy, the change shows up in the other, since they share that object.
+
+##### Deep copy:
+
+- The object and all the objects it refers to are copied recursively.
+- Back to our library example: not only are the cards copied, but also new books are created for the new catalog.
+- That way, changes in one copy do not affect the other.
+
+#### Summary:
+- Use to avoid costly object creation (Database connection, threads, parsing, serialization, GUI)
+- DTOs are not costly objects
+- Helps to avoid the use of the keyword `new`
+- Utilizes `Clonable` interface
+- Usually a `Registry` is required to keep track of all the `Prototype Objects`
+- Usually used when refactoring to deal with performance issues
+- Also known as just a factory pattern
+
+### FACTORY METHOD
+#### Code example
+```
+public abstract class Website {
+
+    public List<Page> getPages() {
+        return pages;
+    }
+
+    protected List<Page> pages = new ArrayList<>();
+
+    public Website() {
+        this.createWebsite();
+    }
+
+    public abstract void createWebsite();
+}
+
+public class Shop extends Website {
+
+    @Override
+    public void createWebsite() {
+        pages.add(new CartPage());
+        pages.add(new ItemPage());
+        pages.add(new SearchPage());
+    }
+}
+
+public class Blog extends Website {
+
+    @Override
+    public void createWebsite() {
+        pages.add(new PostPage());
+        pages.add(new AboutPage());
+        pages.add(new CommentPage());
+        pages.add(new ContactPage());
+    }
+}
+
+public enum WebsiteType {
+    BLOG,SHOP;
+}
+
+public class WebsiteFactory {
+
+    public static Website getWebsite(WebsiteType siteType) {
+
+        switch (siteType) {
+            case BLOG: {
+                return new Blog();
+            }
+            case SHOP: {
+                return new Shop();
+            }
+            default:{
+                return null;
+            }
+        }
+    }
+}
+
+public class FactoryDemo {
+
+    public static void main (String[] args) {
+        Website site = WebsiteFactory.getWebsite(WebsiteType.BLOG);
+
+        System.out.println(site.getPages());
+
+        site = WebsiteFactory.getWebsite(WebsiteType.SHOP);
+
+        System.out.println(site.getPages());
+    }
+}
+```
+
+#### Summary:
+- Creation of the factory methods take place in the concrete classes themselves by overriding the factory method defined in the contract
+- Implementation might be complex
+- Usually not introduced while refactoring and needs to be designed from the beggining
+- Contract (interface or abstract class) driven
+- Parameter driven (parameter specifies which subclass object the factory should return)
+- Lets you choose a type of object to construct at runtime
+
+### ABSTRACT FACTORY
+#### Code example
+```
+public enum CardType {
+	GOLD, PLATINUM;
+}
+
+public class AmexPlatinumCreditCard extends CreditCard {
+
+}
+public class AmexGoldCreditCard extends CreditCard {
+
+}
+
+public class VisaPlatinumCreditCard extends CreditCard {
+
+}
+public class VisaGoldCreditCard extends CreditCard {
+
+}
+
+//AbstractProduct
+public abstract class CreditCard {
+
+	protected int cardNumberLength;
+	
+	protected int cscNumber;
+
+	public int getCardNumberLength() {
+		return cardNumberLength;
+	}
+
+	public void setCardNumberLength(int cardNumberLength) {
+		this.cardNumberLength = cardNumberLength;
+	}
+
+	public int getCscNumber() {
+		return cscNumber;
+	}
+
+	public void setCscNumber(int cscNumber) {
+		this.cscNumber = cscNumber;
+	}
+	
+}
+
+public class VisaFactory extends CreditCardFactory {
+
+	@Override
+	public CreditCard getCreditCard(CardType cardType) {
+        return switch (cardType) {
+            case GOLD -> new VisaGoldCreditCard();
+            case PLATINUM -> new VisaPlatinumCreditCard();
+        };
+
+    }
+
+}
+
+public class AmexFactory extends CreditCardFactory {
+
+	@Override
+	public CreditCard getCreditCard(CardType cardType) {
+
+        return switch (cardType) {
+            case GOLD -> new AmexGoldCreditCard();
+            case PLATINUM -> new AmexPlatinumCreditCard();
+            default -> throw new IllegalStateException("Invalid cardType: " + cardType);
+        };
+	}
+}
+
+//AbstractFactory
+public abstract class CreditCardFactory {
+
+	public static CreditCardFactory getCreditCardFactory(int creditScore) {
+		if(creditScore > 650) {
+			return new AmexFactory();
+		}
+		else {
+			return new VisaFactory();
+		}
+	}
+
+	public abstract CreditCard getCreditCard(CardType cardType);
+
+}
+
+public class AbstractFactoryDemo {
+
+	public static void main(String[] args) {
+		
+		CreditCardFactory abstractFactory = CreditCardFactory.getCreditCardFactory(775);
+		
+		CreditCard card = abstractFactory.getCreditCard(CardType.PLATINUM);
+		
+		System.out.println(card.getClass());
+		
+		abstractFactory = CreditCardFactory.getCreditCardFactory(600);
+		
+		CreditCard card2 = abstractFactory.getCreditCard(CardType.GOLD);
+		
+		System.out.println(card2.getClass());
+	}
+
+}
+```
+
+#### Summary:
+- Factory of factories (factory methods)
+- Most complex creational pattern
+- Pattern that contains other pattern
+- Problem specific (grouping of factories)
+- Often starts with `Factory Method` and after is refactored into `Abstract Factory`
+- Heavy abstraction
+- If you only need one kind of object → use `Factory Method`.
+- If you need a group of related objects that must match each other → use `Abstract Factory`.
+
+## STRUCTURAL
+### ADAPTER
+#### Code example
+```
+public class EmployeeAdapterCSV implements Employee {
+
+	private EmployeeCSV instance;
+
+	public EmployeeAdapterCSV(EmployeeCSV instance) {
+		this.instance = instance;
+	}
+
+	@Override
+	public String getId() {
+		return instance.getId() + "";
+	}
+
+	@Override
+	public String getFirstName() {
+		return instance.getFirstname();
+	}
+
+	@Override
+	public String getLastName() {
+		return instance.getLastname();
+	}
+
+	@Override
+	public String getEmail() {
+		return instance.getEmailAddress();
+	}
+
+}
+
+public class EmployeeCSV {
+
+	private int id;
+	private String firstname;
+	private String lastname;
+	private String emailAddress;
+
+	public EmployeeCSV(String values) {
+		StringTokenizer tokenizer = new StringTokenizer(values, ",");
+		if (tokenizer.hasMoreElements()) {
+			id = Integer.parseInt(tokenizer.nextToken());
+		}
+		if (tokenizer.hasMoreElements()) {
+			firstname = tokenizer.nextToken();
+		}
+		if (tokenizer.hasMoreElements()) {
+			lastname = tokenizer.nextToken();
+		}
+		if (tokenizer.hasMoreElements()) {
+			emailAddress = tokenizer.nextToken();
+		}
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+}
+
+public class EmployeeAdapterLdap implements Employee {
+
+	private EmployeeLdap instance;
+	
+	public EmployeeAdapterLdap(EmployeeLdap instance) {
+		this.instance = instance;
+	}
+	
+	@Override
+	public String getId() {
+		return instance.getCn();
+	}
+
+	@Override
+	public String getFirstName() {
+		return instance.getGivenName();
+	}
+
+	@Override
+	public String getLastName() {
+		return instance.getSurname();
+	}
+
+	@Override
+	public String getEmail() {
+		return instance.getMail();
+	}
+
+	public String toString() {
+		return "ID: " + instance.getCn();
+	}
+	
+}
+
+public class EmployeeLdap {
+
+	private String cn;
+	private String surname;
+	private String givenName;
+	private String mail;
+	
+	public EmployeeLdap(String cn, String surname, String givenName, String mail) {
+		this.cn = cn;
+		this.surname = surname;
+		this.givenName = givenName;
+		this.mail = mail;
+	}
+	
+	public String getCn() {
+		return cn;
+	}
+	public void setCn(String cn) {
+		this.cn = cn;
+	}
+	public String getSurname() {
+		return surname;
+	}
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+	public String getGivenName() {
+		return givenName;
+	}
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
+	}
+	public String getMail() {
+		return mail;
+	}
+	public void setMail(String mail) {
+		this.mail = mail;
+	}	
+}
+
+public class EmployeeDB implements Employee {
+
+	private String id;
+	private String firstName;
+	private String lastName;
+	private String email;
+	
+	public EmployeeDB(String id, String firstName, String lastName, String email) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String toString() {
+		return "ID: " + id + ", First name: " + firstName + ", Last name: " + lastName + ", Email: " + email;
+	}
+
+}
+
+public interface Employee {
+
+	public String getId();
+	public String getFirstName();
+	public String getLastName();
+	public String getEmail();
+	
+}
+
+public class EmployeeClient {
+
+	public List<Employee> getEmployeeList() {
+	
+		List<Employee> employees = new ArrayList<>();
+		
+		Employee employeeFromDB = new EmployeeDB("1234", "John", "Wick", "john@wick.com");
+		
+		employees.add(employeeFromDB);
+		
+		//Will not work! This is where the adapter comes into play!
+		
+		//Employee employeeFromLdap = new EmployeeLdap("chewie", "Solo", "Han", "han@solo.com");
+		
+		EmployeeLdap employeeFromLdap = new EmployeeLdap("chewie", "Solo", "Han", "han@solo.com");
+		
+		employees.add(new EmployeeAdapterLdap(employeeFromLdap));
+		
+		EmployeeCSV employeeFromCSV = new EmployeeCSV("567,Sherlock,Holmes,sherlock@holmes.com");
+		
+		employees.add(new EmployeeAdapterCSV(employeeFromCSV));
+		
+		return employees;
+		
+	}
+	
+}
+
+public class AdapterDemo {
+
+	public static void main(String[] args) {
+		EmployeeClient client = new EmployeeClient();
+		
+		List<Employee> employees = client.getEmployeeList();
+		
+		System.out.println(employees);
+	}
+}
+```
+
+#### Summary:
+- No additional funtionality / methods (becomes `Decorator`)
+- Often used to integrate with legacy code
+- Simple solution
+- Can provide multiple adaptors
+
+### BRIDGE
+#### Code example
+In this example `Printer` is bridged with `Formatter`. This bridge gives us flexibility to add a new `Printer` without impacting the `Formatter` or adding a new `Formatter` without impact to the `Printer`.<br>
+Here a new `Formatter` is introduced (`HtmlFormatter`) and this new formatter can be used with already existing `Printer` instance without any conflicts.
+```
+public class MoviePrinter extends Printer {
+
+	private Movie movie;
+	
+	public MoviePrinter(Movie movie) {
+		this.movie = movie;
+	}
+	
+	@Override
+	protected List<Detail> getDetails() {
+		List<Detail> details = new ArrayList<>();
+		
+		details.add(new Detail("Title", movie.getTitle()));
+		details.add(new Detail("Year", movie.getYear()));
+		details.add(new Detail("Runtime", movie.getRuntime()));
+
+		return details;
+	}
+
+	@Override
+	protected String getHeader() {
+		return movie.getClassification();
+	}
+
+}
+
+public abstract class Printer {
+
+	public String print(Formatter formatter) {
+		return formatter.format(getHeader(), getDetails());
+	}
+	
+	abstract protected List<Detail> getDetails();
+	
+	abstract protected String getHeader();
+}
+
+public class HtmlFormatter implements Formatter {
+
+	@Override
+	public String format(String header, List<Detail> details) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("<table>");
+		builder.append("<th>");
+		builder.append("Classification");
+		builder.append("</th>");
+		builder.append("<th>");
+		builder.append(header);
+		builder.append("</th>");
+
+		for (Detail detail : details) {
+			builder.append("<tr><td>");
+			builder.append(detail.label());
+			builder.append("</td><td>");
+			builder.append(detail.value());
+			builder.append("</td></tr>");
+		}
+		builder.append("</table>");
+
+		return builder.toString();
+	}
+
+}
+
+public class PrintFormatter implements Formatter {
+
+	@Override
+	public String format(String header, List<Detail> details) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(header);
+		builder.append("\n");
+
+		for (Detail detail : details) {
+			builder.append(detail.getLabel());
+			builder.append(":");
+			builder.append(detail.getValue());
+			builder.append("\n");
+		}
+
+		return builder.toString();
+	}
+}
+
+public interface Formatter {
+	String format(String header, List<Detail> details);
+}
+
+public record Detail(String label, String value) {}
+
+public class Movie {
+
+	private String classification;
+	private String runtime;
+	private String title;
+	private String year;
+
+	public String getClassification() {
+		return classification;
+	}
+	public String getRuntime() {
+		return runtime;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setClassification(String classification) {
+		this.classification = classification;
+	}
+
+	public void setRuntime(String runtime) {
+		this.runtime = runtime;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+}
+
+public class BridgeDemo {
+
+	public static void main(String[] args) {
+		Movie movie = new Movie();
+		movie.setClassification("Action");
+		movie.setTitle("John Wick");
+		movie.setRuntime("2:15");
+		movie.setYear("2014");
+		
+		Formatter printFormatter = new PrintFormatter();
+		Printer moviePrinter = new MoviePrinter(movie);
+		
+		String printedMaterial = moviePrinter.print(printFormatter);
+		
+		System.out.println(printedMaterial);
+		
+		Formatter htmlFormatter = new HtmlFormatter();
+		
+		String htmlMaterial = moviePrinter.print(htmlFormatter);
+		
+		System.out.println(htmlMaterial);
+	}
+
+}
+```
+
+#### Summary:
+- Decouples contract from the implementation (interface from the class)
+- Allows to make changes to the contracts without breaking the implementations
+- Increases complexity
+- Conceptually difficult to plan
+- Designed in advance
+- Provides flexibility with a cost of complexity
+
 # Kubernetes
 Kubernetes helps us manage a lot of containers
 
