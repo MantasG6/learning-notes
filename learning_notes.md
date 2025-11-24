@@ -49,6 +49,30 @@ Helps to keep Pods **persistent** (since they are *ephemeral*)
 ### Storage
 **Persistent Volume Claim** is used to reserve some *Cluster* storage for each Pod. Each pod uses their storage independently
 
+### ConfigMap
+ConfigMap is an API object used to store non-confidential data in key-value pairs
+
+Example: 
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5    
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true  
+```
+
 ## Cluster components
 
 ### Control Plane Node (formerly Master Node)
@@ -359,6 +383,8 @@ metadata:
   name: dev
 ```
 
+Namespaces can also be **changed** using NamespaceTransformer instead
+
 ### Adding labels
 You can add label to all objects (resources) metadata or make **common** labels, that will be applied to not only the metadata, but the selectors and the templates
 ```
@@ -380,3 +406,45 @@ commonLabels:
   app.kubernetes.io/version: v1.0
 
 ```
+
+### Generating ConfigMap
+Use `configMapGenerator` to generate a **ConfigMap**<br>
+Multiple **ConfigMaps** can be generated using `configMapGenerator`
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+configMapGenerator:
+  - name: db
+    literals:
+      - SQLITE_DB_LOCATION=/tmp/todos/todo.db
+```
+
+Similarly `Kubernetes Secretes` can be managed too:
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+secretGenerator:
+  - name: registry-credentials
+    files:
+      - config.json
+    type: "kubernetes.io/dockerconfigjson"
+```
+The main difference is that when specifying `Kubernetes Secrets` you can specify a **type**
+
+### Patching
+- #### Strategic Merge Patch
+- #### JSON Patch
+    Patch operations: Add, Remove, Replace, Move, Copy, Test<br>
+    Example:
+    ```
+    # deployment-patch.yaml
+    - op: replace
+      path: /spec/template/spec/containers/0/imagePullPolicy
+      value: Always
+    ```
