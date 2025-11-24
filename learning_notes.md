@@ -268,7 +268,7 @@ public class PrototypeDemo {
 - Use to avoid costly object creation (Database connection, threads, parsing, serialization, GUI)
 - DTOs are not costly objects
 - Helps to avoid the use of the keyword `new`
-- Utilizes `Clonable` interface
+- Utilizes `Cloneable` interface
 - Usually a `Registry` is required to keep track of all the `Prototype Objects`
 - Usually used when refactoring to deal with performance issues
 - Also known as just a factory pattern
@@ -351,7 +351,7 @@ public class FactoryDemo {
 #### Summary:
 - Creation of the factory methods take place in the concrete classes themselves by overriding the factory method defined in the contract
 - Implementation might be complex
-- Usually not introduced while refactoring and needs to be designed from the beggining
+- Usually not introduced while refactoring and needs to be designed from the beginning
 - Contract (interface or abstract class) driven
 - Parameter driven (parameter specifies which subclass object the factory should return)
 - Lets you choose a type of object to construct at runtime
@@ -734,7 +734,7 @@ public class AdapterDemo {
 ```
 
 #### Summary:
-- No additional funtionality / methods (becomes `Decorator`)
+- No additional functionality / methods (becomes `Decorator`)
 - Often used to integrate with legacy code
 - Simple solution
 - Can provide multiple adaptors
