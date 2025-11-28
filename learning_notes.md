@@ -1347,9 +1347,26 @@ The main difference is that when specifying `Kubernetes Secrets` you can specify
 
 ### Patching
 - #### Strategic Merge Patch
+	- Schema aware
+	- It can merge sections instead of overwriting entire sections
+	- Example:
+	```
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: my-app
+      spec:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: nginx:1.19
+	```
 - #### JSON Patch
-    Patch operations: Add, Remove, Replace, Move, Copy, Test<br>
-    Example:
+	- Not schema aware
+	- Used when merge patch cannot express your change
+    - Patch operations: Add, Remove, Replace, Move, Copy, Test<br>
+    - Example:
     ```
     # deployment-patch.yaml
     - op: replace
