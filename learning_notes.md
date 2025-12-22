@@ -1373,3 +1373,47 @@ The main difference is that when specifying `Kubernetes Secrets` you can specify
       path: /spec/template/spec/containers/0/imagePullPolicy
       value: Always
     ```
+
+# GitHub Actions CI/CD
+
+Simple example:
+```
+name: api-build
+
+on:
+  push:
+    paths:
+      - ".github/workflows/api-build.yml"
+      - "api/**"
+  workflow_dispatch: # manual
+
+jobs:
+  build:
+    name: build-dotnet-api
+    runs-on: ubuntu-latest
+	env:
+		GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+	  	with:
+			my-param-version: '1.9.0'
+      - run: dotnet --list-runtimes
+      - run: dotnet --list-sdks
+      - run: dotnet build
+        working-directory: ./api
+      - run: dotnet test
+        working-directory: ./api
+```
+
+- `name` - what you see in GitHub Actions tab workflow list on the left side
+- `on` - describe when will the workflow be triggered
+- `jobs` - describe the actions that will be executed when the workflow is triggered
+	- `name` - describes the name of the job (for example a job can be build, another job can be test and so on)
+	- `runs-on` - runner, could either be github hosted runners or self-hosted
+	- `steps` - the specifics steps that will be run during that job
+		- `uses` - use github action from the action marketplace
+		- `run` - run a specific command
+		- `working-directory` - the directory where the step is gonna run from
+		- `with` - provides a parameter for the step (some steps will have required parameters)
+	- `env` - provide environment variables [list of default github actions env variables](https://docs.github.com/en/actions/reference/workflows-and-actions/variables)
+- `needs` - can provide another job that should run before this
