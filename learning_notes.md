@@ -1416,6 +1416,7 @@ jobs:
 - `name` - what you see in GitHub Actions tab workflow list on the left side
 - `on` - describe when will the workflow be triggered
 - `jobs` - describe the actions that will be executed when the workflow is triggered
+	- `if` - describe a condition on which the job is run (optional). Can be used on step level too. Example: `if: contains(github.event.comment.body, '/chat')`
 	- `name` - describes the name of the job (for example a job can be build, another job can be test and so on)
 	- `runs-on` - runner, could either be github hosted runners or self-hosted
 	- `steps` - the specifics steps that will be run during that job
