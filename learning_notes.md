@@ -12,6 +12,14 @@
 # How to choose the right collection in Java?
 Follow the [link](https://www.baeldung.com/java-choose-list-set-queue-map) to Baeldung page about it.
 
+# Why encapsulation?
+Encapsulation (setting and getting through methods and not directly)
+- Allows to intercept
+- Smart getters and setters (not only sets values but does validation too). Does not comply with SOLID.
+- Easier to find where the problem is if it happens when setting or getting.
+- Safer in concurrency
+
+
 # SOLID
 ## S - Single Responsibility Principle (SRP)
 - A class should have only one reason to change.
