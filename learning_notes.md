@@ -1426,3 +1426,101 @@ jobs:
 		- `with` - provides a parameter for the step (some steps will have required parameters)
 	- `env` - provide environment variables [list of default github actions env variables](https://docs.github.com/en/actions/reference/workflows-and-actions/variables)
 - `needs` - can provide another job that should run before this
+
+## CD with GitHub Actions
+Example to deploy a Docker container of a simple Azure application:
+```
+name: cd-azure
+
+on:
+  push:
+    paths:
+      - ".github/workflows/cd-azure.yml"
+      - "api/**"
+  workflow_dispatch: # manual
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # all commits, so we can generate version off of tags/commit sha...
+      - uses: docker/setup-buildx-action@v3
+      - run: docker buildx ls
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASS }}
+      - run: ./build-push.sh # can reuse local build scripts for CI/CD
+        working-directory: api
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.webapp-url }}
+    needs: build
+    steps:
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: azure/webapps-deploy@v3
+        id: deploy
+        with:
+          app-name: gh-actions-web-api
+          images: weshigbee/actions-web:latest
+          resource-group-name: gh-actions
+```
+
+- `environment` (needs to be created in GitHub settings)
+	- `name`: name of the environment
+	- `url`: url of the deployed application that will be shown after the app is deployed
+
+
+```
+name: integration-tests
+
+on:
+  push:
+    paths:
+      - ".github/workflows/integration-tests.yml"
+  workflow_dispatch: # manual
+
+jobs:
+  generate:
+    outputs:
+      RANDOM_PASSWORD: ${{ env.RANDOM_PASSWORD }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: env | sort
+      - run: echo "RANDOM_PASSWORD=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 12)" >> "$GITHUB_ENV"
+      - run: echo "$RANDOM_PASSWORD / ${{ env.RANDOM_PASSWORD }}"
+      - run: env | sort
+      # - run: mysql ... -p $RANDOM_PASSWORD
+  testing:
+    runs-on: ubuntu-latest
+    needs: generate
+    container:
+      image: mysql:8.4
+    services:
+      mysqlserver:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ needs.generate.outputs.RANDOM_PASSWORD }}
+          MYSQL_DATABASE: foothebar
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - run: echo "${{ needs.generate.outputs.RANDOM_PASSWORD }}"
+      - run: mysql --version
+      - run: mysql -h mysqlserver -u root -p${{ needs.generate.outputs.RANDOM_PASSWORD }} -e "SHOW DATABASES;"
+      - run: echo "job.services= ${{ toJson(job.services)}}"
+      - run: echo "job.container= ${{ toJson(job.container)}}"
+```
+
+- `outputs` can be used to pass outputs between jobs
+- `container` provides a job container that allows to run certain services as a client
+- `services` provide containers that can act as a server and host services
+
+
+## Security
+For security **CodeQL** workflow can be used. Can be set up in Settings -> Code security and analysis -> Code scanning
