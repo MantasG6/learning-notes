@@ -1597,3 +1597,13 @@ jobs:
 - Step debugging - more verbose logs in steps
 	- To enable create GitHub secret or variable **ACTIONS_STEP_DEBUG** with value `true`
 - **ACTIONS_RUNNER_DEBUG** `true` to enable downloadable runner diagnostic logs
+
+## GitHub REST
+[GITHUB REST DOCS](https://docs.github.com/rest)
+
+### Get logs using REST API
+Getting logs for private repositories requires authentication using PAT (Personal Access Token)
+```
+curl -H "Authorization: token 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" -L -o C:\logs\run_logs.zip https://api.github.com/repos/morrisseycode-ps/sampleapp/actions/runs/10777938223/logs
+```
+
