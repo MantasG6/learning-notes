@@ -1607,3 +1607,32 @@ Getting logs for private repositories requires authentication using PAT (Persona
 curl -H "Authorization: token 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" -L -o C:\logs\run_logs.zip https://api.github.com/repos/morrisseycode-ps/sampleapp/actions/runs/10777938223/logs
 ```
 
+## Custom Environment Variables
+Custom environment variables can be described in settings at the same location as secrets
+```
+name: Custom Env Variables
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: write value to $GITHUB_ENV file
+        run: echo "VAR_1=value set from first step" >> "$GITHUB_ENV"
+
+      - name: dispaly value of VAR_1
+        run: echo "Value of VAR_1 is $VAR_1"
+
+      - name: Set color
+        id: color-selector
+        run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
+      - name: Get color
+        env:
+          SELECTED_COLOR: ${{ steps.color-selector.outputs.SELECTED_COLOR }}
+        run: echo "The selected color is $SELECTED_COLOR"
+```
+We can write values into GitHub default variables using `>>`. If we write a custom variable into GITHUB_ENV default variable, we can set a custom variable from inside a workflow without using the Settings tab in GitHub.
