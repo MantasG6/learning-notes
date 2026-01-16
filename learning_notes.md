@@ -1524,3 +1524,71 @@ jobs:
 
 ## Security
 For security **CodeQL** workflow can be used. Can be set up in Settings -> Code security and analysis -> Code scanning
+
+## Reusable workflow
+### Creating reusable workflow
+```
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        required: true
+        type: string
+      app-name:
+        required: true
+        type: string
+      deployment-slot:
+        required: true
+        type: string
+    secrets:
+      azure-profile:
+        required: false
+```
+- For reusable workflow use `workflow_call` like in the above example
+- Variables can be defined using `inputs`
+- Reusable workflow cannot access the secrets from another repository, so the secrets have to be passed using `secrets`
+
+### Using reusable workflow
+There are 3 ways to use the reusable workflow based on it's location (external shared repo or local):
+```
+jobs:
+  call-workflow-1-in-local-repo:
+    uses: owner-name/reponame/.github/workflows/workflow-name.yml@172239021f7ba04fe7327647b213799853a9eb89
+  call-workflow-2-in-local-repo:
+    uses: ./.github/workflows/workflow-name.yml
+	with:
+	  package-name: .net-app
+	  app-name: appsvc1
+	  deployment-slot: development
+	secrets:
+	  azure-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+  call-workflow-in-another-repo:
+    uses: owner-name/another-repo/.github/workflows/workflow-name.yml@v1
+```
+- After @ it should be `SHA`, `Release Tag` or `Branch Name`
+- Use `with` to provide required variables
+- Use `secrets` to provide secrets variables
+- When calling from another repo full path needs to be provided like in the 3rd example
+
+## Starter workflow
+- Starter workflows should be in .github/workflow-templates
+- They should be created in either public repositories or private repositories on GitHub Enterprise Cloud
+- Starter workflow should be created in the organization and the repository name should be .github
+- $default-branch can be provided to fill in the main branches of the repositories that use the starter workflow
+	```
+	on:
+	  push:
+		branches: [ $default-branch ]
+	  pull_request:
+		branches: [ $default-branch ]
+	```
+- metadata with the same filename as the workflow needs to also be created with file extension .properties.json
+	```
+	{
+		"name": "Organization CI Workflow",
+		"description": "MorrisseyCode CI Starter Workflow.",
+		"iconName": "octicon organization",
+		"categories": ["Deployment"]
+	}
+	```
+	Icons can be found [here](https://primer.style/foundations/icons) or a path to a file in the same directory can be provided
