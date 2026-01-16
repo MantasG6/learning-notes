@@ -1592,3 +1592,8 @@ jobs:
 	}
 	```
 	Icons can be found [here](https://primer.style/foundations/icons) or a path to a file in the same directory can be provided
+
+## Debugging GitHub Actions
+- Step debugging - more verbose logs in steps
+	- To enable create GitHub secret or variable **ACTIONS_STEP_DEBUG** with value `true`
+- **ACTIONS_RUNNER_DEBUG** `true` to enable downloadable runner diagnostic logs
