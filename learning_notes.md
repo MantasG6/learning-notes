@@ -1604,7 +1604,7 @@ jobs:
 ### Get logs using REST API
 Getting logs for private repositories requires authentication using PAT (Personal Access Token)
 ```
-curl -H "Authorization: token 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" -L -o C:\logs\run_logs.zip https://api.github.com/repos/morrisseycode-ps/sampleapp/actions/runs/10777938223/logs
+curl -H "Authorization: token {your token...}" -L -o C:\logs\run_logs.zip https://api.github.com/repos/morrisseycode-ps/sampleapp/actions/runs/10777938223/logs
 ```
 
 ## Custom Environment Variables
@@ -1624,7 +1624,7 @@ jobs:
       - name: write value to $GITHUB_ENV file
         run: echo "VAR_1=value set from first step" >> "$GITHUB_ENV"
 
-      - name: dispaly value of VAR_1
+      - name: display value of VAR_1
         run: echo "Value of VAR_1 is $VAR_1"
 
       - name: Set color
