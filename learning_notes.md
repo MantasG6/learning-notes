@@ -19,6 +19,19 @@ Encapsulation (setting and getting through methods and not directly)
 - Easier to find where the problem is if it happens when setting or getting.
 - Safer in concurrency
 
+# OAuth and OIDC (OpenID Connect)
+Really good video with illustrations about that [link](https://www.youtube.com/watch?v=t18YB3xDfXI)
+## OAuth
+- OAuth let's you give access to YOUR data to some application (client) from some service you use (resource server)
+- Client has to have a relationship to Authorization server (like google) beforehand so that the Client could trust the data it receives.
+- Authorization server and resource server is sometimes the same (Google handles both. Authorization and stores your email)
+- Resource Server stores your information, Authorization server handles the secure access to it.
+- The flow: Resource Owner (you) interacts with Client (app) and Client needs permissions -> Redirected to Authorization Server (log in, confirm resource access) -> Provide Client with a token and Redirect you back to Client. Now Client can use the token, send requests straight to Resource Server and receive required data.
+## OpenID Connect
+- Another layer on top of the OAuth
+- Provides Authorization + Authentication
+- Provides Access Token (like previously it enables to access resources from Resource Service) + ID Token (uses JWT to encode some user information)
+- Key difference is addition of ID Token
 
 # SOLID
 ## S - Single Responsibility Principle (SRP)
