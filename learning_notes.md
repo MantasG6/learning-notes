@@ -1429,7 +1429,7 @@ jobs:
 - `name` - what you see in GitHub Actions tab workflow list on the left side
 - `on` - describe when will the workflow be triggered
 - `jobs` - describe the actions that will be executed when the workflow is triggered
-	- `if` - describe a condition on which the job is run (optional). Can be used on step level too. Example: `if: contains(github.event.comment.body, '/chat')`
+	- `if` - describe a condition on which the job is run (optional). Can be used on step, job or workflow levels. Example: `if: contains(github.event.comment.body, '/chat')`
 	- `name` - describes the name of the job (for example a job can be build, another job can be test and so on)
 	- `runs-on` - runner, could either be github hosted runners or self-hosted
 	- `steps` - the specifics steps that will be run during that job
@@ -1649,3 +1649,17 @@ jobs:
         run: echo "The selected color is $SELECTED_COLOR"
 ```
 We can write values into GitHub default variables using `>>`. If we write a custom variable into GITHUB_ENV default variable, we can set a custom variable from inside a workflow without using the Settings tab in GitHub.
+
+## Types of Github Actions
+Action type can be identified by opening the action.yaml file and searching for `runs:` section.
+- ### JavaScript Action
+	- Runs on Node.js
+	- Can be run on Linux, Windows, MacOS runners
+- ### Docker Container Action
+	- Slower than JavaScript
+	- Can run only on Linux runners
+	- Bigger, stronger (code, tools and dependencies)
+- ### Composite Action
+	- Reusable
+	- Combine multiple workflow steps into 1 step and runs as 1 step
+	- Context specific. Usually used for custom Actions
