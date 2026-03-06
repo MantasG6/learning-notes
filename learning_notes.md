@@ -976,7 +976,30 @@ Helps to keep Pods **persistent** (since they are *ephemeral*)
 - Provides **Load Balancing**
 
 ### Storage
-**Persistent Volume Claim** is used to reserve some *Cluster* storage for each Pod. Each pod uses their storage independently
+#### Volume
+- Tied to the pod. If pod is deleted, volume is gone.
+- Useful to share data in the containers within the same pod.
+#### Persistent volume (PV)
+- Cluster level storage resource.
+- It is a resource just like nodes, deployments, etc.
+#### Persistent volume claim (PVC)
+- Request for storage from a user or an application.
+- Check the [guide](kubernetes/Storage/create_pv_pvc/01-create-pv-and-pvc.md) on how to create PV and PVC
+##### Volume types
+- On-node storage (emptyDir, hostPath)
+- Network filesystems (NFS, iSCSI)
+- Cloud provider storage (awsElasticBlockStore, gcePersistentDisk)
+##### Volume access modes
+- ReadWriteOnce (RWO) - most common and widely supported. Can be mounted as **read write** on a single node (not pod, can be multiple pods)
+- ReadOnlyMany (ROX) - can be mounted by many nodes at the same time as **read only**. Good for sharing data that doesn't change often (configs, etc.)
+- ReadWriteMany (RWX) - many nodes at the same time with **Read Write**. Most powerful, but requires a volume type that supports it.
+##### Volume reclaim policies
+- Instructs Kubernetes what to do with the PVC after its claim is released
+- Retain: data remains untouched after PVC deletion (PV stays in tact)
+- Delete: data is removed after PVC deletion (PV is also deleted)
+#### Storage classes
+- Admin can provide different classes of storages the cluster suggests.
+- For example it could be storage tiers: Premium (the biggest tier), Regular, Mini. Each giving different amounts of storage.
 
 ### ConfigMap
 ConfigMap is an API object used to store non-confidential data in key-value pairs
