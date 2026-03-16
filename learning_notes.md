@@ -930,20 +930,20 @@ public class BridgeDemo {
 # Kubernetes
 Kubernetes helps us manage a lot of containers
 
-#### Main benefits
+## Main benefits
 - Speed of deployment
 - Ability to absorb change quickly
 - Ability to recover quickly
 - Hide complexity in the cluster
 
-#### Infrastructure Abstraction
+## Infrastructure Abstraction
 One of the main features that kubernetes provides is **Infrastructure Abstraction**
 Which means when deploying developers don't need to know or care about specific nodes or do any manual jobs to make sure the load balancer sends traffic to the application, it is all done under the hood
 
-#### Desired State
+## Desired State
 We can describe how our application structure looks like (all different services/controllers) and Kubernetes ensures it maintains this **desired state** (all the services are up, how they interact with each other, etc.)
 
-#### Kubernetes API
+## Kubernetes API
 Provides a way to deploy and manage the Kubernetes services and also this is where Kubernetes Cluster components interact with each other
 
 ## Kubernetes API Objects
@@ -998,6 +998,7 @@ Helps to keep Pods **persistent** (since they are *ephemeral*)
 - Retain: data remains untouched after PVC deletion (PV stays in tact)
 - Delete: data is removed after PVC deletion (PV is also deleted)
 #### Storage classes
+To create a storage class follow the [guide](./kubernetes/Storage/StorageClass/01-immediate-provisioning.md) and check out the other ways in [storage class directory](./kubernetes/Storage/storage_class)
 - Admin can provide different classes of storages the cluster suggests.
 - For example it could be storage tiers: Premium (the biggest tier), Regular, Mini. Each giving different amounts of storage.
 

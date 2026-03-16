@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: delayed-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - mountPath: "/data"
+          name: delayed-storage
+  volumes:
+    - name: delayed-storage
+      persistentVolumeClaim:
+        claimName: my-delayed-pvc
