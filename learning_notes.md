@@ -1687,3 +1687,10 @@ Action type can be identified by opening the action.yaml file and searching for 
 	- Reusable
 	- Combine multiple workflow steps into 1 step and runs as 1 step
 	- Context specific. Usually used for custom Actions
+
+# Domain-Driven Design (DDD)
+- Use Ubiquitous language (common with business), Entities, Repositories, etc.
+- Some resources:
+	- Canvases in [DDD Crew Repo](https://github.com/ddd-crew)
+	- Learning Domain-Driven Design, Vlad Khononov
+	- Implementing Domain-Driven Design, Vaughn Vernon
