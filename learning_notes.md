@@ -927,6 +927,116 @@ public class BridgeDemo {
 - Designed in advance
 - Provides flexibility with a cost of complexity
 
+### COMPOSITE
+#### Example:
+```
+public abstract class MenuComponent {
+	
+	String name;
+	String url;
+	List<MenuComponent> menuComponents = new ArrayList<>();
+	
+	public MenuComponent add(MenuComponent menuComponent) {
+		throw new UnsupportedOperationException("Feature not implemented at this level");
+	}
+
+	public MenuComponent remove(MenuComponent menuComponent) {
+		throw new UnsupportedOperationException("Feature not implemented at this level");
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getUrl() {
+		return url;
+	}	
+	
+	public abstract String toString();
+	
+	String print(MenuComponent menuComponent) {
+		StringBuilder builder = new StringBuilder(name);
+		builder.append(": ");
+		builder.append(url);
+		builder.append("\n");
+		return builder.toString();
+	}
+}
+public class Menu extends MenuComponent {
+	
+	public Menu(String name, String url) {
+		this.name = name;
+		this.url = url;
+	}
+	
+	@Override
+	public MenuComponent add(MenuComponent menuComponent) {
+		menuComponents.add(menuComponent);
+		return menuComponent;
+	}
+	
+	@Override
+	public MenuComponent remove(MenuComponent menuComponent) {
+		menuComponents.remove(menuComponent);
+		return menuComponent;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(); //builder pattern
+		
+		builder.append(print(this));
+		
+		Iterator<MenuComponent> itr = menuComponents.iterator();
+		while(itr.hasNext()) {
+			MenuComponent menuComponent = itr.next();
+			builder.append(menuComponent.toString());
+		}
+		
+		return builder.toString();
+	}
+}
+public class MenuItem extends MenuComponent {
+
+	public MenuItem(String name, String url) {
+		this.name = name;
+		this.url = url;
+	}
+	
+	@Override
+	public String toString() {
+		return print(this);
+	}
+}
+public class CompositeMenuDemo {
+
+	public static void main(String[] args) {
+		
+		Menu mainMenu = new Menu("Main", "/main");
+		
+		MenuItem safetyMenuItem = new MenuItem("Safety", "/safety");
+		
+		mainMenu.add(safetyMenuItem);
+		
+		Menu claimsSubMenu = new Menu("Claims", "/claims");
+		
+		mainMenu.add(claimsSubMenu);
+		
+		MenuItem personalClaimsMenu = new MenuItem("Personal Claim", "/personalClaims");
+		
+		claimsSubMenu.add(personalClaimsMenu);
+		
+		System.out.println(mainMenu.toString());
+	}
+}
+```
+
+#### Summary:
+- Tree structure. Basically a class that has a list of itself, which enables you to have children objects inside and make compositions.
+- Implementation can be costly. These compositions can get large really fast.
+- Could simplify things too much. The structure makes it harder to restrict what items can be added, which makes you rely on runtime checks (harder debugging). 
+- Easier for the client. Everything is handled the same way.
+
 # Kubernetes
 Kubernetes helps us manage a lot of containers
 
