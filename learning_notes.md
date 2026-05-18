@@ -1528,6 +1528,9 @@ The main difference is that when specifying `Kubernetes Secrets` you can specify
       path: /spec/template/spec/containers/0/imagePullPolicy
       value: Always
     ```
+## Requests vs Limits in k8s resources
+- Requests - the amount you need most of the time, for the usual usage. Application can exceed this limit, if the assigned node has enough resources. The scheduler will assign your pod to a node having resources described in requests or more, but more is not guaranteed.
+- Limits - the maximum amount your application can use, if application tries to use more pod will be killed.
 
 # GitHub Actions CI/CD
 
@@ -1804,3 +1807,6 @@ Action type can be identified by opening the action.yaml file and searching for 
 	- Canvases in [DDD Crew Repo](https://github.com/ddd-crew)
 	- Learning Domain-Driven Design, Vlad Khononov
 	- Implementing Domain-Driven Design, Vaughn Vernon
+
+# Google Cloud Platform (GCP). Associate Cloud Engineer (ACE).
+GCP documentation can be found [here](https://cloud.google.com/docs)
