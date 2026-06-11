@@ -12,6 +12,16 @@
 # How to choose the right collection in Java?
 Follow the [link](https://www.baeldung.com/java-choose-list-set-queue-map) to Baeldung page about it.
 
+# Checked vs unchecked exceptions in Java
+## Checked exception
+- Extends Exception, but not RuntimeException
+- Users need to handle these
+## Unchecked exceptions
+- Extends RuntimeException
+- These are exceptions that are not expected to be handled
+- Could be something that application does not expect to happen or cannot anticipate
+- For example memory issues
+
 # Why encapsulation?
 Encapsulation (setting and getting through methods and not directly)
 - Allows to intercept
