@@ -22,6 +22,47 @@ Follow the [link](https://www.baeldung.com/java-choose-list-set-queue-map) to Ba
 - Could be something that application does not expect to happen or cannot anticipate
 - For example memory issues
 
+# Spring
+## @Transactional
+Allows to run JDBC methods as one transaction and if anything fails everything is rolled back.
+### Propagation @Transactional(propagation = Propagation.*)
+What happens when a transactional method calls another transactional method
+- REQUIRED(Default): If the outer method is already Transactional it joins, creates new transaction otherwise.
+- REQUIRES_NEW: Always creates new independent transaction. Existing one suspended until this one completes.
+- NESTED: Creates a nested transaction that can be rolled back without impacting the outer transaction. Not all databases support this.
+- SUPPORTS: Joins current transaction, otherwise runs non-transactionally.
+- NOT_SUPPORTED: Always runs non-transactionally. Suspends existing transaction.
+- NEVER: Fails with an exception if a transaction is active. Anti transaction.
+- MANDATORY: Requires existing transaction. If it is called from non-transactional, exception is thrown.
+### Isolation @Transactional(isolation = Isolation.*)
+Control how transactions interact with other concurrent transactions.
+Control what you see when others are reading or writing at the same time.
+- READ_COMMITTED(Default in many DBs): Prevents dirty reads, can only see committed data. Might still see non-repeatable or phantom reads.
+- REPEATABLE_READ: Prevents dirty and non-repeatable reads. Might still allow phantom reads.
+- SERIALIZABLE: Prevents all concurrency annomalies. Transactions behave as they ran one at a time. Also the slowest.
+- READ_UNCOMMITTED: Read uncommitted data (do dirty reads). Not supported in some databases.
+#### Concurrency annomalies
+- Dirty reads: Data that is not yet committed. Transaction A reads data that is rolled back transaction B. Transaction A uses false data.
+- Non-repeatable reads: Transaction A reads data. Concurrent transaction B changes the data and commits. A reads again, data not the same.
+- Phantom reads: Transaction A reads list of data. Concurrent transaction B adds or removes rows and commits. A reads again, has different amount of rows.
+### Rollback Rules
+Default Rollback behavior
+| Exception Type                | Spring Rollback Behavior (by default)                                  |
+|-------------------------------|------------------------------------------------------------------------|
+| RuntimeException              | Rolls back transaction                                                 |
+| UncheckedException            | Rolls back transaction                                                 |
+| CheckedException (Exception)  | Does not roll back (unless configured)                                 |
+| IOException                   | Does not roll back (needs rollbackFor)                                 |
+| Error (e.g. OutOfMemoryError) | Rolls back (technically JVM specific, but Spring treats it as rollback)|
+#### Customizing rollbacks
+- rollbackFor - force rollback for specific exception types.
+- noRollbackFor - prevent rollback for exception types.
+Subclasses are matched too.
+### readOnly attribute
+Hint for DBs, also might help with performance (Hibernate, JPA).
+### Programmatic transaction management (no annotation) and manual rollback
+Use `TransactionTemplate` for programmatic transaction and `status.setRollbackOnly()` to execute rollback manually.
+
 # Why encapsulation?
 Encapsulation (setting and getting through methods and not directly)
 - Allows to intercept
