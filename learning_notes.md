@@ -22,6 +22,27 @@ Follow the [link](https://www.baeldung.com/java-choose-list-set-queue-map) to Ba
 - Could be something that application does not expect to happen or cannot anticipate
 - For example memory issues
 
+# Why encapsulation?
+Encapsulation (setting and getting through methods and not directly)
+- Allows to intercept
+- Smart getters and setters (not only sets values but does validation too). Does not comply with SOLID.
+- Easier to find where the problem is if it happens when setting or getting.
+- Safer in concurrency
+
+# Why Java Strings are immutable
+**String Pool** Java keeps a string pool - a cache of string literals in the heap. When you write
+```java
+String a = "hello";
+String b = "hello";
+```
+Both *a* and *b* point to the same object in the pool. If Strings were mutable changing *a* would corrupt *b*. 
+Immutability makes this sharing safe. It also provides Security and Thread safety at the same time.
+## Modification
+Whenever you do modify the string, it will actually just produce a new object and leave the original in tact. 
+For this reason modification of a string in a loop could be expensive, should use StringBuilder for that.
+## StringBuilder
+StringBuilder is essentially a resizable char[] under the hood which makes it not thread safe anymore, but also not as expensive to use in a loop.
+
 # Spring
 ## @Transactional
 Allows to run JDBC methods as one transaction and if anything fails everything is rolled back.
@@ -62,27 +83,6 @@ Subclasses are matched too.
 Hint for DBs, also might help with performance (Hibernate, JPA).
 ### Programmatic transaction management (no annotation) and manual rollback
 Use `TransactionTemplate` for programmatic transaction and `status.setRollbackOnly()` to execute rollback manually.
-
-# Why encapsulation?
-Encapsulation (setting and getting through methods and not directly)
-- Allows to intercept
-- Smart getters and setters (not only sets values but does validation too). Does not comply with SOLID.
-- Easier to find where the problem is if it happens when setting or getting.
-- Safer in concurrency
-
-# Why Java Strings are immutable
-**String Pool** Java keeps a string pool - a cache of string literals in the heap. When you write
-```java
-String a = "hello";
-String b = "hello";
-```
-Both *a* and *b* point to the same object in the pool. If Strings were mutable changing *a* would corrupt *b*. 
-Immutability makes this sharing safe. It also provides Security and Thread safety at the same time.
-## Modification
-Whenever you do modify the string, it will actually just produce a new object and leave the original in tact. 
-For this reason modification of a string in a loop could be expensive, should use StringBuilder for that.
-## StringBuilder
-StringBuilder is essentially a resizable char[] under the hood which makes it not thread safe anymore, but also not as expensive to use in a loop.
 
 # OAuth and OIDC (OpenID Connect)
 Really good video with illustrations about that [link](https://www.youtube.com/watch?v=t18YB3xDfXI)
