@@ -43,6 +43,30 @@ For this reason modification of a string in a loop could be expensive, should us
 ## StringBuilder
 StringBuilder is essentially a resizable char[] under the hood which makes it not thread safe anymore, but also not as expensive to use in a loop.
 
+# Concurrency in Java
+## Concurrency cheat sheet (summary of part I from "Java Concurrency in Practice")
+- It's the mutable state, stupid.
+
+	All concurrency issues boil down to coordinating access to mutable state. The less mutable state, the easier it is to 
+
+ensure thread safety. 
+- Make fields final unless they need to be mutable.
+- Immutable objects are automatically thread‐safe. 
+
+	Immutable objects simplify concurrent programming tremendously. They are simpler and safer, and can be shared freely without locking or defensive copying.
+
+- Encapsulation makes it practical to manage the complexity.
+
+	You could write a thread‐safe program with all data stored in global variables, but why would you want to? Encapsulating data within objects makes it easier to preserve their invariants; encapsulating synchronization within objects makes it easier to comply with their synchronization policy.
+
+- Guard each mutable variable with a lock.
+- Guard all variables in an invariant with the same lock.
+- Hold locks for the duration of compound actions.
+- A program that accesses a mutable variable from multiple threads without synchronization is a broken program.
+- Don't rely on clever reasoning about why you don't need to synchronize.
+- Include thread safety in the design processor explicitly document that your class is not thread‐safe.
+- Document your synchronization policy.
+
 # Spring
 ## @Transactional
 Allows to run JDBC methods as one transaction and if anything fails everything is rolled back.
